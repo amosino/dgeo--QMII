@@ -18,7 +18,7 @@ output:
 ---
 
 
-<a class="qmii-footer" href="../pdfs/QMII--00--Intro.pdf" target="_blank">
+<a class="qmii-footer" href="QMII--00--Intro.pdf" target="_blank">
   PDF
 </a>
 
