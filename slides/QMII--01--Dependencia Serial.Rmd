@@ -17,6 +17,11 @@ output:
     css: ../src/custom.css
 ---
 
+
+<a class="qmii-footer" href="QMII--00--Intro.pdf" target="_blank">
+  PDF
+</a>
+
 ## Dependencia serial
 
 ### Introducción
