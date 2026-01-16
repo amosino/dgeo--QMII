@@ -244,8 +244,9 @@ Utilizaremos principalmente **Gretl**, pero el estudiante puede optar por:
 
 ### Evaluación
 
-- Tareas: 40%
-- Proyecto Final Aplicado: 30%
+- Tareas: 30%
+- Lecturas: 10%
+- Proyecto Final: 30%
 - Examen Final (Teoría): 30%
 
 ### Seguimiento
