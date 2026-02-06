@@ -1,0 +1,227 @@
+---
+title: "Métodos Cuantitativos II"
+subtitle: "Modelos Autorregresivos con Medias Móviles"
+author: 
+  - "Alejandro Mosiño - _Universidad de Guanajuato_"
+date: "v. 2026.02.06"
+
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "../docs") })
+
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    transition: 0
+    slide_level: 3
+    css: ../src/custom.css
+---
+
+<a class="qmii-footer" href="QMII--02--ARMA.pdf" target="_blank">
+  PDF
+</a>
+
+## Introducción
+
+### Estacionariedad (1/2)
+
+Recordemos que una serie de tiempo, \( y_t \), es estacionaria si:
+
+
+1. Su media es constante:
+
+   $$
+   \begin{align}
+   \mathbb{E}(y_t) &= \mu_{y_t} \\
+   & = \mu
+   \end{align}
+   $$
+   
+2. Su función de autocovarianza, \( Cov(y_t, y_{t-h}) \),  es tal que:
+
+   $$
+   \begin{align}
+   Cov(y_t, y_{t-h}) & = \gamma_y(h)  \\
+   &= \gamma(h); \ \forall \ h \in \mathbb{Z}
+   \end{align}
+   $$
+
+### Estacionariedad (2/2)
+
+¿Cuáles de estas series de tiempo parecen estacionarias?
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+library(tidyverse)
+library(astsa)
+library(here)
+
+culer = c('cyan4', 4, 2, 6)
+
+
+Quarterly <- read.csv(here("data", "E306--Quarterly.csv"))
+Unemp <- ts(Quarterly$Unemp, start =c(1960,1), frequency = 4)
+Tbill <- ts(Quarterly$Tbill , start =c(1960,1), frequency = 4)
+CPI <- ts(Quarterly$CPI, start =c(1960,1), frequency = 4)
+IndProd <- ts(Quarterly$IndProd, start =c(1960,1), frequency = 4)
+
+par(mfrow = c(2,2), cex.main=1)
+tsplot(Unemp, type='o', pch=19, col=culer, main="Tasa de desempleo", xlab="Tiempo", ylab="Desempleo")
+tsplot(Tbill, type='o', pch=19, col=culer, main= "Bonos del tesoro", xlab="Tiempo", ylab="Rendimiento")
+tsplot(CPI, type='o', pch=19, col=culer, main="Precios al consumidor", xlab="Tiempo", ylab="CPI")
+tsplot(IndProd, type='o', pch=19, col=culer, main="Producción industrial", xlab="Tiempo", ylab="IPI")
+par(mfrow=c(1,1))
+
+```
+
+
+### Modelos estacionarios
+
+Para modelar series de tiempo estacionarias usamos modelos **Autorregresivos con Promedios Móviles (ARMA)**. Estos combinan:
+
+- _Parte autorregresiva, AR_: La serie se modela como una combinación lineal de sus valores pasados.
+
+- _Parte de medias móviles, MA_: La serie se modela en función de sus errores pasados.
+  
+
+Los modelos ARMA nos permiten capturar la **parte cíclica** de una serie de tiempo, es decir, las fluctuaciones que ocurren alrededor de una media constante.
+
+### Modelos AR
+
+Formalmente, un modelo **AR(\(p\))** se define como:
+
+  $$
+  \begin{align}
+  y_t &= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + \varepsilon_t\\
+  &= \sum_{i=1}^{p} \phi_i y_{t-i} + \varepsilon_t
+  \end{align}
+  $$
+  
+Donde:
+
+  - \( \phi_i \) son los coeficientes autorregresivos, \(i=1,\dots,p\).
+  - \( \varepsilon_t \) es un ruido blanco.
+  
+### Modelos MA
+
+Un modelo **MA(\(q\))** se define como:
+
+  $$
+  \begin{align}
+  y_t &= \varepsilon_t + \theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2} + \dots + \theta_q \varepsilon_{t-q} \\
+  &= \varepsilon_t + \sum_{j=1}^{q} \theta_j \varepsilon_{t-j}
+  \end{align}
+  $$
+  
+Donde:
+
+  - \( \theta_j \) son los coeficientes de promedios móviles, \(j=1,\dots,q\).
+  - \( \varepsilon_t \) es un ruido blanco.
+  
+
+### Modelos ARMA
+
+Un modelo **ARMA(\(p\),\(q\))** combina los modelos AR(\(p\)) y MA(\(p\)):
+
+  $$
+  \begin{align}
+  y_t &= \sum_{i=1}^{p} \phi_i y_{t-i} + \varepsilon_t \\
+  & + \sum_{j=1}^{q} \theta_j \varepsilon_{t-j}
+  \end{align}
+  $$
+
+Por ejemplo, un modelo ARMA(\(1\),\(1\)):
+
+$$
+  y_t = \phi_1 y_{t-1} + \varepsilon_t + \theta_1 \varepsilon_{t-1}
+$$
+
+
+## El operador de rezagos
+
+### El operador de rezagos
+
+El **operador de rezagos**, \(L\) o \(B\), es un _operador lineal_ tal que, aplicado a una serie de tiempo, \(y_t\):
+
+$$
+L y_t = y_{t-1}
+$$
+
+Naturalmente:
+
+$$
+\begin{align}
+L^2 y_t &= L(L y_t)\\
+&= L y_{t-1} \\
+&= y_{t-2}
+\end{align}
+$$
+
+En general:
+
+$$
+L^i y_t = y_{t-i}
+$$
+
+### El operador de rezagos y los modelos ARMA (1/2)
+
+Un modelo ARMA(\(p\), \(q\)) puede reescribirse en términos del operador de rezagos. En particular:
+
+$$
+  \begin{align}
+  y_t = \phi_1 y_{t-1} &+ \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + \varepsilon_t \\
+  & +\theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2} + \dots + \theta_q \varepsilon_{t-q} \\
+  \end{align}
+$$
+
+puede reescribirse como:
+
+$$
+  \begin{align}
+  y_t = \phi_1 Ly_{t} &+ \phi_2 L^2y_{t} + \dots + \phi_p L^py_{t} + \varepsilon_t \\
+  & + \theta_1 L\varepsilon_{t} + \theta_2 L^2\varepsilon_{t} + \dots + \theta_q L^q\varepsilon_{t}
+  \end{align}
+$$
+
+### El operador de rezagos y los modelos ARMA (2/2)
+
+Un modelo ARMA(\(p\), \(q\)) puede reescribirse en términos del operador de rezagos:
+
+$$
+  \Phi(L) y_t = \Theta(L)\varepsilon_{t}
+$$
+
+Donde:
+
+$$
+\begin{align}
+  \Phi(L)  & = 1-\phi_1 L - \phi_2 L^2 - \phi_3 L^3 - \dots - \phi_p L^p\\
+  \Theta(L)  &= 1+\theta_1 L + \theta_2 L^2 + \theta_3 L^3 + \dots + \theta_q L^q
+  \end{align}
+$$
+
+### Estacionariedad e Invertibilidad (1/2)
+
+Usando la notación en términos del operador de rezagos, es posible demostrar que un proceso ARMA(\(p\), \(q\)) es:
+
+1. **Estacionario** si las raíces de \(\Phi(L)=0\) están _fuera_ del círculo unitario (\(|L|>1\)).  
+2. **Invertible** si las raíces de \(\Theta(L)=0\) están _fuera_ del círculo unitario (\(|L|>1\)).
+
+<span class="emphasis-blue">Nota</span>  
+
+- Un proceso AR estacionario puede reescribirse como un MA(\(\infty\)).  
+- Un proceso MA invertible puede reescribirse como un AR(\(\infty\)).  
+
+Estas condiciones garantizan que el modelo tenga una representación estable y única.
+
+
+### Estacionariedad e Invertibilidad (2/2)
+
+En la práctica:
+
+- No trabajamos con representaciones AR(\(\infty\)) o MA(\(\infty\)).  
+- Buscamos modelos ARMA finitos, parsimoniosos y estables.  
+- La estacionariedad e invertibilidad garantizan una parametrización bien comportada y una estimación confiable.
+
+En la práctica, el software suele imponer automáticamente estas restricciones.
+
