@@ -217,11 +217,108 @@ Estas condiciones garantizan que el modelo tenga una representación estable y �
 
 ### Estacionariedad e Invertibilidad (2/2)
 
-En la práctica:
+Aunque en la práctica no trabajamos explícitamente con representaciones AR(\(\infty\)) o MA(\(\infty\)), su existencia es fundamental porque permite:
 
-- No trabajamos con representaciones AR(\(\infty\)) o MA(\(\infty\)).  
-- Buscamos modelos ARMA finitos, parsimoniosos y estables.  
-- La estacionariedad e invertibilidad garantizan una parametrización bien comportada y una estimación confiable.
+- Calcular momentos poblacionales (media, varianza y autocovarianzas).  
+- Derivar la función de autocorrelación y la _función de autocorrelación parcial_.  
+- Construir funciones impulso–respuesta.  
 
-En la práctica, el software suele imponer automáticamente estas restricciones.
+En la práctica, estas representaciones se usan como herramientas analíticas, no como modelos estimables.
 
+## Dinámica de la serie y propagación de shocks
+
+### Descomposición de Wold (1/3)
+
+Consideremos un modelo ARMA(\(p\),\(q\)):
+
+$$
+  \Phi(L) y_t = \Theta(L)\varepsilon_{t}\\
+  \varepsilon_t \sim WN(0,\sigma^2)
+$$
+
+Deseamos calcular la funciones promedio, de autocovarianza y de autocorrelación. Para esto, conviene expresar el proceso en su representación MA(\(\infty\)). Luego, hacemos uso de la **descomposición de Wold**.
+
+### Descomposición de Wold (2/3)
+
+Sea \(\{y_t\}\) un proceso débilmente estacionario con media cero y varianza finita. Entonces existe una representación única:
+
+$$
+y_t = \sum_{i=0}^{\infty} \psi_i \varepsilon_{t-i}, 
+\qquad \psi_0 = 1, 
+\qquad \sum_{i=0}^{\infty} \psi_i^2 < \infty.
+$$
+
+donde \(\varepsilon_t\) es un ruido blanco.
+
+
+### Descomposición de Wold (3/3)
+
+Entonces, si \( y_t \) es una serie estacionaria:
+
+   $$
+   \mathbb{E}(y_t) = \mu.
+   $$
+
+Y:
+
+   $$
+   \gamma_y(h) = \sigma^2 \sum_{j=0}^\infty \psi_j \psi_{j+h}.
+   $$
+
+
+### Ejemplo: MA(\(1\))
+
+$$
+y_t = \varepsilon_t + \theta_1 \varepsilon_{t-1}
+$$
+
+Este proceso cumple naturalmente con la representación de Wold, con:
+
+$$
+\psi_0 = 1, \quad \psi_1 = \theta_1.
+$$
+
+
+### Ejemplo: AR(\(1\))
+
+$$
+y_t = \phi_1 y_{t-1} + \varepsilon_t
+$$
+
+Si \(|\phi_1|<1\), el proceso tiene representación MA(\(\infty\)):
+
+$$
+y_t = \sum_{i=0}^{\infty} \phi_1^i \varepsilon_{t-i}.
+$$
+
+Entonces, en este caso:
+
+$$
+\psi_i = \phi_1^i.
+$$
+
+### Ejercicio
+
+Usando la descomposición de Wold, muestra que, para un proceso MA(\(1\)):
+
+$$
+\gamma(h) = \begin{cases}
+(1 + \theta_1^2) \sigma^2 & h=0\\
+\theta_1 \sigma^2 & |h|=1\\
+0 & |h|>1
+\end{cases}
+\qquad
+\rho(h) = \begin{cases}
+1 & h=0\\
+\frac{\theta_1}{1 + \theta_1^2} & |h|=1\\
+0 & |h|>1
+\end{cases}
+$$
+
+Y muestra que, para un proceso AR(\(1\)) con \(|\phi_1|<1\):
+
+$$
+\gamma(h)=\phi_1^{|h|}\frac{\sigma^2}{1-\phi_1^2},
+\qquad
+\rho(h)=\phi_1^{|h|}.
+$$
