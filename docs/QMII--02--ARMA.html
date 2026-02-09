@@ -3641,6 +3641,8 @@ y_t = \sum_{i=0}^{\infty} \psi_i \varepsilon_{t-i},
 
 </article></slide><slide class=""><hgroup><h2>Descomposición de Wold: MA(\(1\))</h2></hgroup><article  id="descomposición-de-wold-ma1" class="smaller ">
 
+<p>Como ejemplo, consideremos un proceso MA(\(1\)):</p>
+
 <p>\[
 y_t = \varepsilon_t + \theta_1 \varepsilon_{t-1}
 \]</p>
@@ -3652,6 +3654,8 @@ y_t = \varepsilon_t + \theta_1 \varepsilon_{t-1}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Descomposición de Wold: AR(\(1\))</h2></hgroup><article  id="descomposición-de-wold-ar1" class="smaller ">
+
+<p>Ahora, consideremos un proceso AR(\(1\)):</p>
 
 <p>\[
 y_t = \phi_1 y_{t-1} + \varepsilon_t
@@ -4364,7 +4368,7 @@ Grafica la FIR de este proceso. Muestra que esta es:
 
 </article></slide><slide class="segue dark nobackground level2"><hgroup class = 'auto-fadein'><h2>Función de autocorrelación parcial</h2></hgroup><article  id="función-de-autocorrelación-parcial" class="smaller ">
 
-</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (1/3)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-13" class="smaller ">
+</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (1/4)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-14" class="smaller ">
 
 <p>Considera un proceso AR(\(p\)):</p>
 
@@ -4384,7 +4388,7 @@ y_t &amp;= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + 0\cdot y_{
 \end{align}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (2/3)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-23" class="smaller ">
+</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (2/4)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-24" class="smaller ">
 
 <p>Lo anterior indica que, <em>si nuestro proceso es realmente un AR(\(p\))</em> todos los coeficientes:</p>
 
@@ -4397,7 +4401,7 @@ y_t &amp;= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + 0\cdot y_{
 
 <p>Esta observación da origen a la definición de <strong>función de autocorrelación parcial</strong>.</p>
 
-</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (3/3)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-33" class="smaller ">
+</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (3/4)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-34" class="smaller ">
 
 <p>La función de autocorrelación parcial (FACP), no es más que la secuencia de coeficientes \(\phi_{kk}\) del sistema:</p>
 
@@ -4411,11 +4415,28 @@ y_t &amp;= \phi_{k1}y_{t-1} + \phi_{k2}y_{t-2} + \dots + \phi_{kk}y_{t-k} + \var
 \end{align}
 \]</p>
 
-<p>La FACP mide la correlación entre \(y_t\) y \(y_{t-k}\) eliminando el efecto de los rezagos intermedios. Esto es, mide la correlación &ldquo;directa&rdquo; entre dos observaciones separadas por \(k\) periodos.</p>
+<p>La FACP mide la correlación entre \(y_t\) y \(y_{t-k}\) una vez controlado el efecto lineal de los rezagos intermedios.</p>
 
-</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial: Ejemplo</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-ejemplo" class="smaller ">
+</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial (4/4)</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-44" class="smaller ">
 
-<p>Se puede demostrar, por ejemplo que, para un proceso AR(\(2\)), la función de autocorrelación parcial es:</p>
+<p>Para encontrar la FACP podemos utilizar la siguiente fórmula de <em>correlación condicional</em>:</p>
+
+<p>\[
+\text{Corr}(X,Y\mid Z)=\frac{\rho_{XY}-\rho_{XZ}\rho_{YZ}}
+{\sqrt{(1-\rho_{XZ}^2)(1-\rho_{YZ}^2)}}.
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial: Ejemplos</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-ejemplos" class="smaller ">
+
+<p>Podemos mostrar que, para un proceso AR(\(1\)), la función de autocorrelación parcial es:</p>
+
+<p>\[
+\begin{align}
+\phi_{11} &amp;= \rho_1 \\
+\end{align}
+\]</p>
+
+<p>Y, para un proceso AR(\(2\)):</p>
 
 <p>\[
 \begin{align}
@@ -4423,6 +4444,10 @@ y_t &amp;= \phi_{k1}y_{t-1} + \phi_{k2}y_{t-2} + \dots + \phi_{kk}y_{t-k} + \var
 \phi_{22} &amp;= \frac{\rho_2-\rho_1^2}{1-\rho_1^2}
 \end{align}
 \]</p>
+
+</article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial: Estimación</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-estimación" class="smaller ">
+
+<p>En la práctica, la FACP no es más que una secuencia de coeficientes estimados por el método de los <em>mínimos cuadrados ordinarios</em>.</p>
 
 </article></slide><slide class=""><hgroup><h2>La función de autocorrelación parcial: identificación empírica</h2></hgroup><article  id="la-función-de-autocorrelación-parcial-identificación-empírica" class="smaller ">
 
