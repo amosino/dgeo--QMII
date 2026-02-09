@@ -3,7 +3,7 @@ title: "Métodos Cuantitativos II"
 subtitle: "Modelos Autorregresivos con Medias Móviles"
 author: 
   - "Alejandro Mosiño - _Universidad de Guanajuato_"
-date: "v. 2026.02.06"
+date: "v. 2026.02.09"
 
 knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_dir = "../docs") })
@@ -322,6 +322,37 @@ $$
 \rho(h)=\phi_1^{|h|}.
 $$
 
+### Función de autocorrelación (FAC): identificación empírica
+
+A nivel empírico, la función de autocorrelación (FAC) permite identificar patrones iniciales en la dinámica de la serie. En particular:
+
+
+<table class="clean-table">
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Patrón FAC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AR(p)</td>
+<td>Decae gradualmente</td>
+</tr>
+<tr>
+<td>MA(q)</td>
+<td>Se corta después del rezago q</td>
+</tr>
+<tr>
+<td>ARMA(p,q)</td>
+<td>Decae gradualmente</td>
+</tr>
+</tbody>
+</table>
+
+
+La FAC permite detectar la presencia de memoria en la serie y orientar la especificación del modelo.
+
 
 ## La función de impulso respuesta
 
@@ -532,5 +563,449 @@ plot(0:(num_periods-1), impulse_response, type="h", lwd=2, col="cyan4",
      main="Función de Impulso-Respuesta del AR(2)")
 points(0:(num_periods-1), impulse_response, pch=16, col="red")
 grid()
+
+```
+
+
+## Función de autocorrelación parcial
+
+### La función de autocorrelación parcial (1/3)
+
+Considera un proceso AR(\(p\)):
+
+$$
+\begin{align}
+y_t &= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + \varepsilon_t \\
+\varepsilon_t &\sim WN(0,\sigma^2)
+\end{align}
+$$
+
+Este puede reescribirse como:
+
+$$
+\begin{align}
+y_t &= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + 0\cdot y_{t-p-1} + 0\cdot y_{t-p-2} + 0\cdot y_{t-p-m} + \varepsilon_t \\
+\varepsilon_t &\sim WN(0,\sigma^2)
+\end{align}
+$$
+
+
+### La función de autocorrelación parcial (2/3)
+
+Lo anterior indica que, _si nuestro proceso es realmente un AR(\(p\))_ todos los coeficientes:
+
+$$
+\begin{align}
+\phi_{p+1} &= \phi_{p+2} = \dots = \phi_{p+m} \\
+&= 0
+\end{align}
+$$
+En palabras: 1) la FACP es distinta de cero hasta el rezago \(p\); 2) para rezagos mayores, la FACP es cero.
+
+
+Esta observación da origen a la definición de **función de autocorrelación parcial**.
+
+### La función de autocorrelación parcial (3/3)
+
+La función de autocorrelación parcial (FACP), no es más que la secuencia de coeficientes \(\phi_{kk}\) del sistema:
+
+$$
+\begin{align}
+y_t &= \phi_{11}y_{t-1} + \varepsilon_{1t}\\
+y_t &= \phi_{21}y_{t-1} + \phi_{22}y_{t-2} + \varepsilon_{2t}\\
+y_t &= \phi_{31}y_{t-1} + \phi_{32}y_{t-2} + \phi_{33}y_{t-3} + \varepsilon_{3t}\\
+&\vdots\\
+y_t &= \phi_{k1}y_{t-1} + \phi_{k2}y_{t-2} + \dots + \phi_{kk}y_{t-k} + \varepsilon_{kt}\\
+\end{align}
+$$
+
+La FACP mide la correlación entre \(y_t\) y \(y_{t-k}\) eliminando el efecto de los rezagos intermedios. Esto es, mide la correlación “directa” entre dos observaciones separadas por \(k\) periodos.
+
+
+### La función de autocorrelación parcial: Ejemplo
+
+Se puede demostrar, por ejemplo que, para un proceso AR(\(2\)), la función de autocorrelación parcial es:
+
+$$
+\begin{align}
+\phi_{11} &= \rho_1 \\
+\phi_{22} &= \frac{\rho_2-\rho_1^2}{1-\rho_1^2}
+\end{align}
+$$
+
+### La función de autocorrelación parcial: identificación empírica
+
+Al igual que la FAC, la función de autocorrelación parcial permite identificar patrones iniciales en la dinámica de la serie. En este caso tenemos:
+
+<table class="clean-table">
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Patrón FACP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AR(p)</td>
+<td>Se corta después del rezago p</td>
+</tr>
+<tr>
+<td>MA(q)</td>
+<td>Decae gradualmente</td>
+</tr>
+<tr>
+<td>ARMA(p,q)</td>
+<td>Decae gradualmente</td>
+</tr>
+</tbody>
+</table>
+
+
+## Identificación del orden de un ARMA(\(p\),\(q\))
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (1/8)
+
+En ausencia de parámetros,usamos las observaciones \(\{y_t\}_{t=1}^T\) para encontrar:
+
+  - Promedio muestral
+  - Autocovarianza muestral
+  - Autocorrelación muestral
+  - Autocorrelación parcial
+  
+Para identificar el orden de un ARMA(\(p\),\(q\)), _comparamos el comportamiento de las medidas de dependencia serial muestrales con el comportamiento teórico_ para diferentes valores de \(p\) y de \(q\).
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (2/8)
+
+<span class="emphasis-blue">Regla 1</span>
+
+La _función de autocorrelación_ puede ayudarnos a saber si el modelo adecuado es un AR/ARMA o un MA. Si el modelo es un MA, la función de autocorrelación nos indica su orden.
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+# Cargamos librerías (si no las tienes instaladas, usa install.packages())
+library(astsa)
+
+# Semilla para reproducibilidad
+set.seed(123)
+
+# Número de observaciones en la simulación
+n <- 200
+
+# Vector de colores
+culer <- c("cyan4", 4, 2, 6)
+
+# Simulaciones de cada proceso:
+sim_ma1    <- arima.sim(model = list(order = c(0,0,1), ma = 0.5),         n = n)
+sim_ma2    <- arima.sim(model = list(order = c(0,0,2), ma = c(0.5, -0.3)),n = n)
+sim_ar1    <- arima.sim(model = list(order = c(1,0,0), ar = 0.7),         n = n)
+sim_ar2 <- arima.sim(model = list(order = c(2,0,0), ar = c(0.2,0.7)), n = n)
+
+# Ajustamos la ventana de 2x2 y configuramos márgenes y tamaños de texto
+par(
+  mfrow    = c(2,2),      # 2 filas, 2 columnas
+  mar      = c(4,4,3,1),  # márgenes (abajo, izq, arriba, der)
+  cex.main = 1.3,         # tamaño del título
+  cex.lab  = 1.2,         # tamaño de las etiquetas de ejes
+  cex.axis = 1.1          # tamaño de las marcas en los ejes
+)
+
+# Gráfico 1: FAC de MA(1)
+acf(sim_ma1, 
+    main = "FAC de MA(1)",
+    col  = culer,
+    lwd  = 2)             # grosor de línea
+
+# Gráfico 2: FAC de MA(2)
+acf(sim_ma2,
+    main = "FAC de MA(2)",
+    col  = culer,
+    lwd  = 2)
+
+# Gráfico 3: FAC de AR(1)
+acf(sim_ar1,
+    main = "FAC de AR(1)",
+    col  = culer,
+    lwd  = 2)
+
+# Gráfico 4: FACP de AR(2)
+acf(sim_ar2,
+    main = "FAC de AR(2)",
+    col  = culer,
+    lwd  = 2)
+
+dev.off()
+```
+
+Si la FAC presenta corte abrupto, tenemos evidencia de componente MA(\(q\)).
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (3/8)
+
+<span class="emphasis-blue">Regla 2</span>
+
+Si el modelo resulta ser un AR(\(p\)), la _función de autocorrelación parcial_ nos indicará su orden.
+
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+
+par(
+  mfrow    = c(2,2),      # 2 filas, 2 columnas
+  mar      = c(4,4,3,1),  # márgenes (abajo, izq, arriba, der)
+  cex.main = 1.3,         # tamaño del título
+  cex.lab  = 1.2,         # tamaño de las etiquetas de ejes
+  cex.axis = 1.1          # tamaño de las marcas en los ejes
+)
+
+# Gráfico 1: FACP de MA(1)
+pacf(sim_ma1, 
+    main = "FACP de MA(1)",
+    col  = culer,
+    lwd  = 2)             # grosor de línea
+
+# Gráfico 2: FACP de MA(2)
+pacf(sim_ma2,
+    main = "FACP de MA(2)",
+    col  = culer,
+    lwd  = 2)
+
+# Gráfico 3: FACP de AR(1)
+pacf(sim_ar1,
+    main = "FACP de AR(1)",
+    col  = culer,
+    lwd  = 2)
+
+# Gráfico 4: FACP de AR(2)
+pacf(sim_ar2,
+    main = "FACP de ARMA(2)",
+    col  = culer,
+    lwd  = 2)
+
+dev.off()
+```
+
+Si la FACP presenta corte abrupto, tenemos evidencia de componente AR(\(p\)).
+
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (4/8)
+
+<span class="emphasis-blue">Regla 3</span>
+
+Los residuales del modelo seleccionado deben comportarse (estadísticamente) como un ruido blanco.
+
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (5/8)
+
+Para saber si el residual de un proceso se comporta (estadísticamente) como un ruido blanco, usamos el **estadístico Q** de _Ljung-Box_:
+
+$$
+Q_{LB} = T(T+2)\sum_{h=1}^m\frac{\rho_h^2}{T-h}
+$$
+
+Probamos la hipótesis nula:
+
+$$
+\begin{align}
+H_0 :& \ \varepsilon_t \sim WN \\
+H_1 :& \ \varepsilon_t \nsim WN
+\end{align}
+$$
+
+Si la hipótesis nula es correcta, se puede demostrar que:
+
+$$
+Q_{LB} \sim \chi^2_m; \ m \approx \sqrt{T}
+$$
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (6/8)
+
+<span class="emphasis-blue">Regla 4</span>
+
+Si tenemos más de un modelo, podemos seleccionar el mejor usando la función de verosimilitud. En general, el modelo con un _valor más alto_ para la función de (log) verosimilitud es el mejor.
+
+Esto también nos ayuda a elegir el orden de un proceso ARMA(\(p,q\)) cuando \(p\) y \(q\) son simultáneamente diferentes de cero.
+
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (7/8)
+
+
+Alternativamente, podemos elegir el modelo comparando:
+
+- Los valores del **criterio de información de Akaike** (AIC):
+
+$$
+AIC = \mathbb{E}[-2\mathcal{L}(\cdot)] = T\ln(s^2) + 2k
+$$
+
+- Los valores del **criterio de información de Schwartz** (SIC o BIC):
+
+$$
+BIC = T\ln(s^2) + k\ln(T)
+$$
+
+En general, buscamos el modelo que tenga el _menor valor posible_ para estos criterios.
+
+
+### Identificación del orden de un ARMA(\(p\),\(q\)) (8/8)
+
+
+<span class="emphasis-blue">Regla 5</span>
+
+Si el AIC y el BIC seleccionan modelos diferentes, tomar en cuenta que:
+
+- _AIC es eficiente_: selecciona el modelo que tenga el error de predicción más pequeño.
+
+- _BIC es consistente_: selecciona el modelo correcto con probabilidad 1 si \(T\) es grande.
+
+### Estimación de un ARMA(\(p\),\(q\))
+
+
+<span class="emphasis-blue">Nota</span>
+
+Una vez que hemos identificado el orden del proceso, podemos estimar este usando el **método de máxima verosimilitud**.
+
+
+## Pronósticos
+
+### Pronósticos usando ARMA(\(p\),\(q\))
+
+Una vez que hemos estimado los coeficientes de un proceso ARMA(\(p\),\(q\)), podemos utilizar el modelo para realizar pronósticos. 
+
+Sea \(y_T\) el último valor disponible de \(y_t\). Entonces, el mejor pronóstico para \(h\) periodos hacia el futuro de \(y_t\), \(\widehat y_{T+h\mid T}, \ h=1,2,\dots \), es la **proyección lineal óptima**:
+
+$$
+\begin{align}
+\widehat y_{T+h\mid T} &= \mathbb{E}(y_{T+h}\mid \Omega_T),\\ 
+\Omega_T&=\{y_T,y_{T-1},y_{T-2},\dots\}
+\end{align}
+$$
+la cual, _en el caso de normalidad_, coincide con el valor esperado condicional.
+
+### Pronósticos usando ARMA(\(p\),\(q\)): Ejemplo
+
+<span class="emphasis-blue">Ejemplo</span>
+
+Consideremos un proceso AR(\(1\)):
+
+$$
+\begin{align}
+y_t&=\phi_0+\phi_1y_{t-1}+\varepsilon_t, \ |\phi_1|<1\\
+\varepsilon_t & \sim iid\mathcal{N}(0,\sigma^2)\\
+\end{align}
+$$
+En este caso tenemos:
+
+$$
+\begin{align}
+\mathbb{E}(y_{T+1}\mid\Omega_T) &= \phi_0 + \phi_1 y_T,\\
+\mathbb{E}(y_{T+2}\mid\Omega_T) &= \phi_0 (1+\phi_1) + \phi_1^{2} y_T,\\
+\mathbb{E}(y_{T+3}\mid\Omega_T) &= \phi_0(1+\phi_1+\phi_1^{2}) + \phi_1^{3} y_T,\\
+& \vdots \\
+\mathbb{E}(y_{T+h}\mid\Omega_T) &= \phi_0\sum_{j=0}^{h-1}\phi_1^{j} + \phi_1^{h} y_T\\
+&= \mu(1-\phi_1^h)+\phi_1^h y_T \\
+\end{align}
+$$
+
+### Pronósticos usando ARMA(\(p\),\(q\)) (3/3)
+
+<span class="emphasis-blue">Ejemplo (cont'd)</span>
+
+Nota que, para un proceso AR(\(1\)), si consideramos un horizonte más largo:
+
+$$
+\lim_{h\to\infty}\mathbb{E}(y_{T+h}\mid\Omega_T)=\mu,
+$$
+
+donde:
+
+$$
+\mu=\frac{\phi_0}{1-\phi_1}.
+$$
+Esto es, \(\mathbb{E}(y_{T+h})\) _converge a la media no condicional_ de \(y_t\).
+
+
+### Varianza del pronóstico (1/2)
+
+Por supuesto, la calidad del pronóstico \(y_{T+h}\) depende crucialmente de la **varianza del error del pronóstico**, \(\mathbb{V}ar\big[y_{T+h}-\mathbb{E}(y_{T+h}\mid\Omega_T)\big]\).
+
+
+<span class="emphasis-blue">Ejemplo</span>
+
+Consideremos un proceso AR(\(1\)). La varianza del error de pronóstico de \(y_t\) para \(h\) periodos hacia el futuro es:
+
+$$
+\begin{align}
+\mathbb{V}ar\!\big[y_{T+h}-\mathbb{E}(y_{T+h}\mid\Omega_T)\big]
+&=\sigma^2\sum_{j=0}^{h-1}\phi_1^{2j} \\
+&=\sigma^2\frac{1-\phi_1^{2h}}{1-\phi_1^2}
+\end{align}
+$$
+
+
+
+### Varianza del pronóstico (2/2)
+
+Nota que, conforme \(h\) crece, tenemos que la varianza del pronóstico _converge a la varianza no condicional_ de \(y_t\):
+
+$$
+\lim_{h\to\infty}\mathbb{V}ar\!\big[y_{T+h}-\mathbb{E}(y_{T+h}\mid\Omega_T)\big] =  
+\frac{\sigma^2}{1-\phi_1^2}.
+$$
+
+### Pronósticos, caso general
+
+Recordemos que, si un proceso ARMA(\(p,q\)) es estacionario e invertible, existe una representación MA(\(\infty\)) de la forma:
+
+$$
+y_t=\mu + \sum_{i=0}^{\infty}\psi_i\,\varepsilon_{t-i},\qquad \psi_0=1.
+$$
+
+En este caso:
+
+$$
+\begin{align}
+\mathbb{V}ar\!\big[y_{T+h}-\mathbb{E}(y_{T+h}\mid\Omega_T)\big]
+&=\sigma^2\sum_{i=0}^{h-1}\psi_i^{2} \\
+\lim_{h\to\infty}\mathbb{E}(y_{T+h}\mid\Omega_T)&=\mu\ .
+\end{align}
+$$
+
+### Intervalos de predicción
+
+Si \(\varepsilon_t\sim iid \mathcal{N}(0,\sigma^2)\), un intervalo de confianza de \(100(1-\alpha)\%\) para \(y_{T+h}\) se calcula como:
+
+$$
+\widehat y_{T+h\mid T}\ \pm\ z_{1-\alpha/2}\,\sqrt{\mathbb{V}ar\!\big[y_{T+h}-\mathbb{E}(y_{T+h}\mid\Omega_T)\big]}.
+$$
+
+
+Por ejemplo, si \(\alpha=0.05\), \(z_{1-\alpha/2}=1.96\). Entonces:
+
+$$
+\widehat y_{T+h\mid T}\ \pm\ 1.96\,\sqrt{\mathbb{V}ar\!\big[y_{T+h}-\mathbb{E}(y_{T+h}\mid\Omega_T)\big]}.
+$$
+
+
+### Estimación y pronósticos: Ejemplo
+
+En el siguiente ejemplo usamos un índice para el empleo en Canadá que va desde el primer trimestre de 1962 al cuarto trimestre de 1992. Usamos un modelo AR(\(2\)) para pronosticar los cuatro trimestres de 1993 y 1994.
+
+
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+library(here)
+library(astsa)
+
+employment <- read.csv(here("data", "E311--Employment.csv"))
+caemp <- ts(employment$caemp, start=c(1961,1), end=c(1994,4), frequency = 4)
+train <- window(caemp, end=c(1992,4))
+h <- length(window(caemp, start=c(1993,1)))
+sarima.for(train, n.ahead=h, p=2, d=0, q=0,
+           main="Empleo en Canadá: ajuste AR(2) y pronóstico",
+           xlab="Tiempo", ylab="Índice de empleo")
+
+lines(caemp, lwd=2)
+
+dev.off()
 
 ```
