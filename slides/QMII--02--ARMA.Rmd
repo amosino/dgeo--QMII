@@ -219,13 +219,12 @@ Estas condiciones garantizan que el modelo tenga una representación estable y �
 
 Aunque en la práctica no trabajamos explícitamente con representaciones AR(\(\infty\)) o MA(\(\infty\)), su existencia es fundamental porque permite:
 
-- Calcular momentos poblacionales (media, varianza y autocovarianzas).  
-- Derivar la función de autocorrelación y la _función de autocorrelación parcial_.  
-- Construir funciones impulso–respuesta.  
+- Calcular momentos poblacionales (medidas de dependencia serial).
+- Construir funciones impulso–respuesta.
+- Derivar la _función de autocorrelación parcial_.  
+  
 
-En la práctica, estas representaciones se usan como herramientas analíticas, no como modelos estimables.
-
-## Dinámica de la serie y propagación de shocks
+## Descomposición de Wold y medidas de dependencia serial
 
 ### Descomposición de Wold (1/3)
 
@@ -266,7 +265,7 @@ Y:
    $$
 
 
-### Ejemplo: MA(\(1\))
+### Descomposición de Wold: MA(\(1\))
 
 $$
 y_t = \varepsilon_t + \theta_1 \varepsilon_{t-1}
@@ -279,7 +278,7 @@ $$
 $$
 
 
-### Ejemplo: AR(\(1\))
+### Descomposición de Wold: AR(\(1\))
 
 $$
 y_t = \phi_1 y_{t-1} + \varepsilon_t
@@ -297,7 +296,7 @@ $$
 \psi_i = \phi_1^i.
 $$
 
-### Ejercicio
+### Descomposición de Wold: Ejercicio
 
 Usando la descomposición de Wold, muestra que, para un proceso MA(\(1\)):
 
@@ -322,3 +321,216 @@ $$
 \qquad
 \rho(h)=\phi_1^{|h|}.
 $$
+
+
+## La función de impulso respuesta
+
+### Función de Impulso-Respuesta (1/2)
+
+La **Función de Impulso-Respuesta (IRF)**:
+
+- Muestra cómo un choque en el término de error, \( \varepsilon_t \), afecta a una serie de tiempo, \(y_t\), en periodos futuros.
+
+- Permite analizar la _dinámica temporal_ de un proceso y la persistencia de los efectos de un shock.
+
+### Función de Impulso-Respuesta (2/2)
+
+Si el proceso admite representación MA(\(\infty\)):
+
+$$
+y_t = \sum_{j=0}^\infty \psi_j \varepsilon_{t-j},
+$$
+
+entonces la IRF es simplemente:
+
+$$
+IRF(j) = \psi_j.
+$$
+
+Esta nos indica el efecto que tiene un shock (_normalizado a una unidad_) en el periodo \(s\)-ésimo, \(\varepsilon_{s}\), sobre la variable \(y_t\).
+
+### Función de Impulso-Respuesta: MA(\(1\))
+
+Consideremos un proceso MA(\(1\)):
+
+  $$
+  y_t = \varepsilon_t + \theta_1 \varepsilon_{t-1}
+  $$
+
+En este caso, la FIR:
+
+<table class="clean-table">
+  <thead>
+    <tr>
+      <th>Periodo</th>
+      <th>\( s-2 \)</th>
+      <th>\( s-1 \)</th>
+      <th>\( s \)</th>
+      <th>\( s+1 \)</th>
+      <th>\( s+2 \)</th>
+      <th>\( s+3 \)</th>
+      <th>\( \dots \)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>\( \varepsilon_t \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>\( \dots \)</td>
+    </tr>
+    <tr>
+      <td>\( y_t \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>\( \theta_1 \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>\( \dots \)</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+### Función de Impulso-Respuesta: AR(1)
+
+Para calcular la FIR de un proceso AR(\(1\)), primero tenemos que invertirlo. Como hemos visto antes, un proceso AR(\(1\)) puede invertirse en un proceso MA(\(\infty\)) en tanto el coeficiente \(|\phi_1|<1\):
+
+$$
+y_t = \sum_{i=0}^{\infty} \phi_1^i \varepsilon_{t-i}
+$$
+
+Entonces, la FIR es:
+
+<table class="clean-table">
+  <thead>
+    <tr>
+      <th>Periodo</th>
+      <th>\( s-2 \)</th>
+      <th>\( s-1 \)</th>
+      <th>\( s \)</th>
+      <th>\( s+1 \)</th>
+      <th>\( s+2 \)</th>
+      <th>\( s+3 \)</th>
+      <th>\( \dots \)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>\( \varepsilon_t \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>\( \dots \)</td>
+    </tr>
+    <tr>
+      <td>\( y_t \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>\( \phi_1 \)</td>
+      <td>\( \phi_1^2 \)</td>
+      <td>\( \phi_1^3 \)</td>
+      <td>\( \dots \)</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+### Función de Impulso-Respuesta: Ejemplo (1/2)
+
+<span class="emphasis-blue">Ejercicio</span>
+
+Considera el proceso AR(\(2\)):
+
+$$
+y_t = 0.6y_{t-1} + 0.2y_{t-2} + \varepsilon_{t}
+$$
+
+<ol start="1">
+  <li>Muestra que la FIR es:
+   </li>
+   
+   <table class="clean-table">
+  <thead>
+    <tr>
+      <th>Periodo</th>
+      <th>\( s-2 \)</th>
+      <th>\( s-1 \)</th>
+      <th>\( s \)</th>
+      <th>\( s+1 \)</th>
+      <th>\( s+2 \)</th>
+      <th>\( s+3 \)</th>
+      <th>\( \dots \)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>\( \varepsilon_t \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>\( \dots \)</td>
+    </tr>
+    <tr>
+      <td>\( y_t \)</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.6</td>
+      <td>0.516</td>
+      <td>0.4579</td>
+      <td>\( \dots \)</td>
+    </tr>
+  </tbody>
+</table>
+
+### Función de Impulso-Respuesta: Ejemplo (2/2)
+
+<span class="emphasis-blue">Ejercicio</span>
+
+<ol start="2">
+<li>Grafica la FIR de este proceso. Muestra que esta es:
+</li>
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='60%', out.height='60%'}
+
+# Parámetros del modelo AR(2)
+phi1 <- 0.6
+phi2 <- 0.2
+num_periods <- 20  # Número de periodos a calcular
+
+# Inicializar la FIR con un choque unitario en t=0
+impulse_response <- numeric(num_periods)
+impulse_response[1] <- 1  # Choque inicial en epsilon_t
+
+# Calcular la FIR iterativamente
+for (t in 2:num_periods) {
+  if (t == 2) {
+    impulse_response[t] <- phi1 * impulse_response[t-1]
+  } else {
+    impulse_response[t] <- phi1 * impulse_response[t-1] + phi2 * impulse_response[t-2]
+  }
+}
+
+# Graficar la función de impulso-respuesta
+plot(0:(num_periods-1), impulse_response, type="h", lwd=2, col="cyan4",
+     xlab="Periodos", ylab="FIR",
+     main="Función de Impulso-Respuesta del AR(2)")
+points(0:(num_periods-1), impulse_response, pch=16, col="red")
+grid()
+
+```
