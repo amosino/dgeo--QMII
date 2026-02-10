@@ -121,7 +121,7 @@ Donde:
 
 ### Modelos ARMA
 
-Un modelo **ARMA(\(p\),\(q\))** combina los modelos AR(\(p\)) y MA(\(p\)):
+Un modelo **ARMA(\(p\),\(q\))** combina los modelos AR(\(p\)) y MA(\(q\)):
 
   $$
   \begin{align}
