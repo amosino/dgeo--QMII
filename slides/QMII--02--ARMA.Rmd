@@ -588,7 +588,7 @@ Este puede reescribirse como:
 
 $$
 \begin{align}
-y_t &= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + 0\cdot y_{t-p-1} + 0\cdot y_{t-p-2} + 0\cdot y_{t-p-m} + \varepsilon_t \\
+y_t &= \phi_1 y_{t-1} + \phi_2 y_{t-2} + \dots + \phi_p y_{t-p} + 0\cdot y_{t-p-1} + 0\cdot y_{t-p-2} + \dots +0\cdot y_{t-p-m} + \varepsilon_t \\
 \varepsilon_t &\sim WN(0,\sigma^2)
 \end{align}
 $$
