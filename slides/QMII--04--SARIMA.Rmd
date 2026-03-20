@@ -648,100 +648,257 @@ Un proceso \(ARMA(P,Q)_{s}\):
   
 ### Modelos SARMA Multiplicativos
   
-  Un proceso con componente estacional multiplicativo implica, como su nombre lo indica, multiplicar un proceso ARMA(\(p,q\)) por un proceso SARMA(\(P,Q\))_{s}.
+Un proceso con componente estacional multiplicativo implica, como su nombre lo indica, multiplicar un proceso \(ARMA(p,q)\) por un proceso \(SARMA(P,Q)_{s}\).
 
 
 
-### MA(1) x MA(1)_{12} (1/4)
 
-Considera un proceso MA(1):
-  
-  Y considera un proceso MA(1)_{12}:
-  
-  
-  
-### MA(1) x MA(1)_{12} (2/4)
-  
-  Entonces, un proceso MA(1) x MA(1)_{12}:
-  
-  O, de forma equivalente:
-  
-  
-  
-### MA(1) x MA(1)_{12} (3/4)
-  
-  Se puede demostrar que:
-  
-  Y que:
-  
-  
-  
-### MA(1) x MA(1)_{12} (4/4)
-  
-  
-  
-### MA(1) x AR(1)_{12} (1/3)
-  
-  Considera un proceso MA(1):
-  
-  Y considera un proceso AR(1)_{12}:
-  
-  
-  
-### MA(1) x AR(1)_{12} (2/3)
-  
-  Entonces, un proceso MA(1) x AR(1)_{12}:
-  
-  O, de forma equivalente:
-  
-  
-  
-### MA(1) x AR(1)_{12} (3/3)
-  
-  
-  
-## FAC y FACP
-  
-  Para los procesos multiplicativos que hemos visto tenemos:
-  
-  
-  
-### ARMA(\(p,q\)) x ARMA(\(P,Q\))_{s}
-  
-  
-  
-### ARMA(\(p,q\)) x ARMA(\(P,Q\))_{s}: Ejemplo (1/3)
-  
-  Considera los siguientes datos sobre el uso de transporte (autobús y tren ligero) en Denver y Colorado. 
+### \(MA(1) \times MA(1)_{12}\) (1/4)
 
-Los datos van desde agosto 2000 hasta marzo 2006. 
+Considera un proceso \(MA(1)\):
 
-Los datos se encuentran en escala logarítmica.
+$$
+\begin{align}
+y_t &= \varepsilon_t + \theta_1\varepsilon_{t-1}\\
+&= (1+\theta_1 L)\varepsilon_t
+\end{align}
+$$
+  
+Y considera un proceso \(MA(1)_{12}\):
+  
+$$
+\begin{align}
+y_t &= \varepsilon_t + \Theta_1\varepsilon_{t-s}\\
+&=(1+\Theta_1 L^{12})\varepsilon_t
+\end{align}
+$$
+  
+### \(MA(1) \times MA(1)_{12}\) (2/4)
+  
+Entonces, un proceso \(MA(1) \times MA(1)_{12}\):
 
-```{r, echo=FALSE}
-# insertar gráfica
+$$
+\begin{align}
+y_t &= (1+\theta_1 L)(1+\Theta_1 L^{12})\varepsilon_t\\
+&=(1+\theta_1L+\Theta_1 L^{12}+\theta_1\Theta_1L^{13})\varepsilon_t
+\end{align}
+$$
+  
+O, de forma equivalente:
+
+$$
+y_t = \varepsilon_t + \theta_1 \varepsilon_{t-1} + \Theta_1 \varepsilon_{t-12}  + \theta_1\Theta_1\varepsilon_{t-13}
+$$
+  
+  
+  
+### \(MA(1) \times MA(1)_{12}\) (3/4)
+  
+Para este proceso, se puede demostrar que:
+
+$$
+\mathbb{E}(y_t) = 0
+$$
+  
+Y que:
+
+$$
+\begin{matrix}
+\rho_1 = \frac{\theta_1}{1+\theta_1^2} & \rho_{11} = \frac{\theta_1\Theta_1}{(1+\theta_1^2)(1+\Theta_1^2)}
+\\
+\rho_{12} = \frac{\Theta_1}{1+\Theta_1^2}& \rho_{13} = \frac{\theta_1\Theta_1}{(1+\theta_1^2)(1+\Theta_1^2)}
+\end{matrix}
+$$  
+  
+  
+### \(MA(1) \times MA(1)_{12}\) (4/4)
+  
+Entonces, un proceso \(MA(1) \times MA(1)_{12}\):
+
+- Tiene una FAC que es diferente de cero para los retardos \(k=1\) y \(k=12\).
+
+
+- Tiene una FAC que es diferente de cero para los retardos \(k=11\) y \(k=13\).
+
+- Es matemáticamente equivalente a un \(MA(13)\) con parámetros: \(\theta_1 = \theta_1\), \(\theta_2=\theta_2=\dots=\theta_{11}=0\) y \(\theta_{13}=\Theta_1\).
+
+  
+### \(MA(1) \times AR(1)_{12}\) (1/3)
+  
+Considera un proceso \(MA(1)\):
+  
+$$
+\begin{align}
+y_t &= \varepsilon_t + \theta_1\varepsilon_{t-1}\\
+&= (1+\theta_1 L)\varepsilon_t
+\end{align}
+$$
+  
+
+Y considera un proceso \(AR(1)_{12}\):
+
+
+$$
+\begin{align}
+y_t &= \Phi_1 y_{t-12} + \varepsilon_t\\
+(1-\Phi_1 L^{12})y_t &=\varepsilon_t
+\end{align}
+$$
+  
+  
+  
+### \(MA(1) \times AR(1)_{12}\) (2/3)
+  
+Entonces, un proceso \(MA(1) \times AR(1)_{12}\):
+
+$$
+(1-\Phi_1 L^{12})y_t =(1+\theta_1L)\varepsilon_t
+$$
+  
+
+
+O, de forma equivalente:
+  
+$$
+y_t =\Phi_1 y_{t-12} + \varepsilon_t + \theta_1\varepsilon_{t-1}
+$$
+  
+### \(MA(1) \times AR(1)_{12}\) (3/3)
+  
+Entonces, un proceso \(MA(1) \times AR(1)_{12}\):
+
+- Tiene una FAC que es del tipo AR en los retardos \(k=12, 24, 26 \dots\).
+
+
+- Tiene una FAC que es del tipo MA en el retardo \(k=1\) y en \(k=11, 13, 25,\dots\).
+
+- Es matemáticamente equivalente a un \(ARMA(12,1)\) con parámetros: \(\phi_1=\phi_2=\dots=\phi_{11}=0\), \(\phi_{12}=\Phi_1\) y \(\theta_1 = \theta_1\).
+
+  
+### FAC y FACP
+  
+Para los procesos multiplicativos que hemos visto tenemos:
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+
+par(mfrow=c(2,2))
+phi.ar12=c(rep(0,11),0.9)
+theta.Theta=c(-0.5,rep(0,10),-0.9,0.45)
+# ARMAacf function includes the k=0 lag for ACF
+# Use y = y[2:51] to remove k=0 lag from ARMAacf output; only for ACF
+y = acf.ma.ma = ARMAacf(ma=theta.Theta,lag.max=50)
+y = y[2:51]
+plot(y, x = 1:50, type = "h", ylim = c(-1,1), xlab = "k",
+     ylab = "Autocorrelation", main = "MA1*MA1(12) ACF")
+abline(h=0)
+pacf.ma.ma = ARMAacf(ma=theta.Theta,lag.max=50,pacf=T)
+plot(pacf.ma.ma,type='h',xlab="k",ylab="PACF",main = "MA1*MA1(12) PACF")
+abline(h=0)
+y = acf.ma.ar = ARMAacf(ar=phi.ar12,ma=-0.5,lag.max=50)
+y = y[2:51]
+plot(y, x = 1:50, type = "h", ylim = c(-1,1), xlab = "k",
+     ylab = "Autocorrelation", main = "MA1*AR1(12) ACF")
+abline(h=0)
+pacf.ma.ar = ARMAacf(ar=phi.ar12,ma=-0.5,lag.max=50,pacf=T)
+plot(pacf.ma.ar,type='h',xlab="k",ylab="PACF",main = "MA1*AR1(12) PACF")
+abline(h=0)
+```
+  
+  
+### \(ARMA(p,q) \times ARMA(P,Q)_{s}\)
+
+El proceso \(ARMA(p,q) \times ARMA(P,Q)_{s}\) es el más general de los modelos multiplicativos. Se puede demostrar que:
+
+- Es matemáticamente equivalente a un proceso ARMA con los coeficientes de su parte AR caracterizados por \(\boldsymbol{\Phi}^*(L) = \boldsymbol{\Phi}(L) \boldsymbol{\Phi}_P (L^s) \) y los coeficientes de su parte MA caracterizados por \(\boldsymbol{\Theta}^*(L) = \boldsymbol{\Theta}(L) \boldsymbol{\Theta}_Q(L^s)\).
+
+
+- Debido a esta equivalencia, podemos utilizar los mismos métodos de especificación, ajuste, diagnósticos, etc., de un modelo ARMA.
+
+  
+  
+### \(ARMA(p,q) \times ARMA(P,Q)_{s}\): Ejemplo (1/3)
+  
+Considera los siguientes datos sobre el uso de transporte (autobús y tren ligero) en Denver y Colorado. Los datos van desde agosto 2000 hasta marzo 2006. (Los datos se encuentran en escala logarítmica).
+
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+
+data(boardings)
+boardings = boardings[,1]
+tsplot(boardings, type='l', col=culer[2],
+       ylab="(Log) Número de abordajes",
+       xlab="Tiempo")
+points(y = boardings,
+       x = time(boardings),
+       pch = 21,           
+       bg  = "white",      
+       col = culer[3],
+       cex = 1.6)
+points(y=boardings,
+       x=time(boardings),
+       pch=as.vector(season(boardings)), 
+       )
+
+
 ```
 
 
 
-### ARMA(\(p,q\)) x ARMA(\(P,Q\))_{s}: Ejemplo (2/3)
+### \(ARMA(p,q) \times ARMA(P,Q)_{s}\): Ejemplo (2/3)
 
-La siguiente figura presenta la FAC y la FACP. 
-
-Estos sugieren un modelo ARMA(0,3) x ARMA(1,0)_{12}:
+La siguiente figura presenta la FAC y la FACP. Estos sugieren un modelo \(ARMA(0,3) x ARMA(1,0)_{12}\):
   
-```{r, echo=FALSE}
-# insertar gráfica
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+par(mfrow=c(2,2))
+acf(as.vector(boardings),main="Sample ACF",lag.max=40)
+pacf(as.vector(boardings),main="Sample PACF",lag.max=40)
+
 ```
 
 
 
-### ARMA(\(p,q\)) x ARMA(\(P,Q\))_{s}: Ejemplo (3/3)
+### \(ARMA(p,q) \times ARMA(P,Q)_{s}\): Ejemplo (3/3)
 
-Utilizamos el periodo agosto 2000 a julio 2005 para ajustar el modelo y utilizamos el resto para analizar qué tan bueno es el pronóstico:
+Utilizamos el periodo agosto 2000 a julio 2005 para ajustar el modelo y utilizamos el resto de los datos para analizar qué tan bueno es el pronóstico:
   
-```{r, echo=FALSE}
-# insertar gráfica
+```{r, echo=FALSE, results="hide", message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
+
+# Serie de entrenamiento
+train_start <- c(2000, 8)
+train_end   <- c(2005, 7)
+freq        <- 12
+h           <- 8
+
+train_series <- window(boardings, start = train_start, end = train_end)
+
+# Pronóstico
+sarima.for(train_series,
+           n.ahead = h,
+           p = 0, d = 0, q = 3,
+           P = 1, D = 0, Q = 0, S = 12,
+           plot.all = TRUE,
+           main = "(Log) Número de abordajes",
+           xlab = "Tiempo",
+           ylab = "(Log) Número de abordajes")
+
+# Serie completa observada
+lines(boardings)
+
+# Ajuste del modelo en la muestra de entrenamiento
+fit_boardings <- arima(train_series,
+                       order = c(0,0,3),
+                       method = "ML",
+                       seasonal = list(order = c(1,0,0), period = 12))
+
+# Serie ajustada
+fitted_ts <- train_series - residuals(fit_boardings)
+
+lines(fitted_ts, col = "red")
+
+
+
 ```
 
 
