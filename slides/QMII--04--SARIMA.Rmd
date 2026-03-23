@@ -362,7 +362,7 @@ dev.off()
 
 ## Componente estacional estocástico: Modelos SARMA
 
-### Componente estacional estocástico
+### Componente estacional estocástico (1/2)
 
 Sea \(y_t\) una serie de tiempo que presenta un patrón estacional estocástico. En este caso, la dependencia serial no ocurre en todos los retardos, sino en aquellos que son múltiplos de \(s\). Por ejemplo:
 
@@ -381,7 +381,13 @@ points(milk, pch=19, col=culer[3])
 
 ```
 
-En el caso de la producción de leche en los Estados Unidos (datos mensuales de enero 1994 a diciembre 2005), la dependencia serial ocurre en cada trimestre (\(s=4\)). ¿Cómo incorporamos esta estructura en el modelo?
+En el caso de la producción de leche en los Estados Unidos (datos mensuales de enero 1994 a diciembre 2005), la dependencia serial ocurre en cada trimestre (\(s=12\)). ¿Cómo incorporamos esta estructura en el modelo?
+
+
+### Componente estacional estocástico (2/2)
+
+Para incorporar la dependencia serial en retardos múltiplos de \(s\), podemos extender los modelos ARMA para incluir retardos estacionales.
+
 
 ### Modelo \(MA(Q)_{s}\)
 
