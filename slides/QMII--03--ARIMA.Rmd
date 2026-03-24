@@ -3,7 +3,7 @@ title: "Métodos Cuantitativos II"
 subtitle: "Modelos no estacionarios I: tendencia"
 author: 
   - "Alejandro Mosiño - _Universidad de Guanajuato_"
-date: "v. 2026.02.26"
+date: "v. 2026.03.24"
 
 knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_dir = "../docs") })
@@ -690,49 +690,66 @@ Podemos probar de manera conjunta la _ausencia de deriva, tendencia temporal y r
 
 En la práctica no es tan claro qué caso de la prueba ADF considerar. Una opción es seguir el siguiente procedimiento.
 
-```{r, echo=FALSE, results="show", message=FALSE, warning=FALSE, out.width='100%', out.height='30%'}
+```{r, echo=FALSE, results="show", message=FALSE, warning=FALSE, fig.align='center', out.width='70%'}
 
 library(DiagrammeR)
-
 grViz("
 digraph dickey_fuller_flowchart {
-
-  # --- Definición de Estilos ---
-  graph [layout = dot, rankdir = LR, splines=ortho]
-
+  # --- Layout ---
+  graph [layout = dot, rankdir = LR, splines=polyline, nodesep=0.2, ranksep=1]
+  
   node [shape = box, 
         style = rounded, 
         fontname = Helvetica,
-        color = '#4E8A9C']
+        color = '#4E8A9C',
+        fontsize = 9,
+        width = 1.3,
+        height = 0.5]
         
   edge [fontname = Helvetica,
-        color = '#555555']
-
-  # --- Definición de los Nodos (las cajas) ---
-  start [label = 'PASO 1: Modelo General (constante + tendencia)\\nPrueba H₀: γ = 0']
+        color = '#555555',
+        fontsize = 8]
   
-  decision1 [label = '¿Se rechaza H₀?', shape = diamond, width=2, height=1, color='#D35400']
+  # --- Fila 1 (arriba) ---
+  start [label = 'PASO 1\nModelo con tendencia\nH0: γ = 0']
+  decision1 [label = '¿Rechaza H0?', shape = diamond, color='#D35400', width=1, height=0.8, fontsize=9]
+  conclusion_ts [label = 'Tendencia estacionaria)', 
+                 fillcolor='#D5F5E3', style=filled, color='#27AE60']
   
-  conclusion_ts [label = 'Conclusión:\\nEstacionaria en tendencia\\nAcción: detrending\\nFIN', 
-                 shape=note, fillcolor='#D5F5E3', style=filled]
+  # --- Fila 2 (medio) ---
+  step2 [label = 'PASO 2\nModelo con constante\nH=: γ = 0']
+  decision2 [label = '¿Rechaza H0?', shape = diamond, color='#D35400', width=1, height=0.8, fontsize=9]
+  conclusion_stat [label = 'Estacionaria\n(media ≠ 0)', 
+                   fillcolor='#D5F5E3', style=filled, color='#27AE60']
   
-  simplify [label = 'PASO 2: Modelo reducido (solo constante)\\nPrueba H₀: γ = 0']
+  # --- Fila 3 (abajo) ---
+  step3 [label = 'PASO 3\nModelo sin constante\nsin tendencia\nH0: γ = 0']
+  decision3 [label = '¿Rechaza H0?', shape = diamond, color='#D35400', width=1, height=0.8, fontsize=9]
+  conclusion_ur [label = 'NO estacionaria\nDiferenciar', 
+                 fillcolor='#FADBD8', style=filled, color='#E74C3C']
+  conclusion_zero [label = 'Estacionaria\n(media = 0)', 
+                   fillcolor='#D5F5E3', style=filled, color='#27AE60']
   
-  decision2 [label = '¿Se rechaza H₀?', shape = diamond, width=2, height=1, color='#D35400']
+  # --- Flujo zigzag ---
+  start -> decision1
+  decision1 -> conclusion_ts [label='SÍ', fontcolor='#27AE60']
+  decision1 -> step2 [label='NO', fontcolor='#E74C3C']
   
-  conclusion_stat [label = 'Conclusión:\\nEstacionaria (media ≠ 0)\\nAcción: usar en niveles\\nFIN', 
-                   shape=note, fillcolor='#D5F5E3', style=filled]
+  step2 -> decision2
+  decision2 -> conclusion_stat [label='SÍ', fontcolor='#27AE60']
+  decision2 -> step3 [label='NO', fontcolor='#E74C3C']
   
-  conclusion_ur [label = 'Conclusión final:\\nRaíz unitaria I(1)\\nAcción: diferenciar\\nFIN', 
-                 shape=note, fillcolor='#FADBD8', style=filled]
-
-  # --- Definición de las Flechas (la secuencia) ---
-  start -> decision1;
-  decision1 -> conclusion_ts [label = 'SÍ'];
-  decision1 -> simplify [label = 'NO'];
-  simplify -> decision2;
-  decision2 -> conclusion_stat [label = 'SÍ'];
-  decision2 -> conclusion_ur [label = 'NO'];
+  step3 -> decision3
+  decision3 -> conclusion_zero [label='SÍ', fontcolor='#27AE60']
+  decision3 -> conclusion_ur [label='NO', fontcolor='#E74C3C']
+  
+  
+  # --- Alineación por filas ---
+  {rank=same; start; decision1; conclusion_ts}
+  {rank=same; step2; decision2; conclusion_stat}
+  {rank=same; step3; decision3; conclusion_zero}
+  
+  
 }
 ")
 
