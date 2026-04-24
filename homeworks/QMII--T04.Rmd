@@ -133,7 +133,7 @@ $$
 
 # Ejercicio 5
 
-Utiliza los datos mensuales sobre el _total de pasajeros en líneas aéreas de 1949 a 1969_: `E312--AirPassengers.csv`.
+Utiliza los datos mensuales sobre el _total de pasajeros en líneas aéreas de 1949 a 1960_: `E312--AirPassengers.csv`.
 
 1. Grafica la serie en niveles.
 
@@ -153,4 +153,4 @@ Utiliza los datos mensuales sobre el _total de pasajeros en líneas aéreas de 1
 
 9. Realiza un pronóstico para los siguientes 12 meses.
 
-10. Compara visualmente el pronóstico con la trayectoria observada de la serie. Comenta los resultados.
+10. Reserva los últimos 12 meses como muestra de prueba. Estima el modelo con la muestra de entrenamiento y compara el pronóstico con los valores observados.
