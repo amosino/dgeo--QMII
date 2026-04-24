@@ -117,21 +117,21 @@ dev.off()
 
 ### Heteroscedasticidad condicional
 
-Estos hechos estilizados sugieren que la varianza, _aunque puede ser constante en el largo plazo (no condicional), varía en el corto plazo dependiendo de la información disponible_. Esto es la **heteroscedasticidad condicional**
+Estos hechos estilizados sugieren que _la varianza no es constante a lo largo del tiempo, sino que depende de la información disponible en el pasado_. Esto es la **heteroscedasticidad condicional**
 
 ## Modelos ARCH
 
 ### Modelos ARCH (1/4)
 
-Sea \(y_t\)  una serie de tiempo. Esta puede seguir, por ejemplo, un proceso ARMA(\(p,q\)) que puede incluir algunas variables explicativas adicionales (que por sí mismas podrían ser series de tiempo):
+Sea \(y_t\)  una serie de tiempo que sigue un proceso del tipo:
 
 $$
 \begin{align}
-y_t &= \phi_0 + \boldsymbol{\beta}\mathbf{x}_t + \sum_{i=1}^p \phi_i y_{t-i} + \sum_{j=1}^q \theta_j \varepsilon_{t-j} + \varepsilon_t\\
+y_t &= \mu_t + \varepsilon_t\\
 \varepsilon_t & \sim WN(0,\sigma^2)
 \end{align}
 $$
-
+donde \(\mu_t\) es una función del tiempo (por ejemplo, un proceso ARIMA).
 
 ### Modelos ARCH (2/4)
 
@@ -139,22 +139,25 @@ A diferencia de lo que hemos hecho antes, supondremos ahora que:
 
 $$
 \begin{align}
-\varepsilon_t^2 &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots +  \alpha_m \varepsilon_{t-m}^2 + \omega_t \\
+\varepsilon_t &= \upsilon_t \sqrt{h_t}\\
+\upsilon_t &\sim iid (0,1)\\
+h_t &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots +  \alpha_m \varepsilon_{t-m}^2\\
 \alpha_0&>0; \ \alpha_i \geq 0; \ i=1,\dots,m \\
-\omega_t &\sim WN (0,\lambda^2)
 \end{align}
 $$
 
-
 ### Modelos ARCH (3/4)
 
-El supuesto anterior implica que:
+El supuesto anterior implica que, aunque la varianza no condicional de \(\varepsilon_t\) sigue siendo constante, _la varianza condicional depende de sus valores pasados_. Esto es:
 
 $$
-\mathbb{E}(\varepsilon_t^2|\varepsilon_{t-1},\varepsilon_{t-2},\dots,\varepsilon_{t-m}) = \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots + + \alpha_m \varepsilon_{t-m}^2
+\begin{align}
+\mathbb{E}(\varepsilon_t^2|\varepsilon_{t-1},\varepsilon_{t-2},\dots,\varepsilon_{t-m}) 
+& = \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots + \alpha_m \varepsilon_{t-m}^2 \\
+& =h_t 
+\end{align}
 $$
-
-Es decir, aunque la varianza no condicional de \(\varepsilon_t\) sigue siendo constante (igual a \(\sigma^2\)), _la varianza condicional no lo es_. Cuando esto ocurre tenemos que:
+En este caso decimos que:
 
 $$
 \varepsilon_{t} \sim \text{ARCH}(m)
@@ -186,78 +189,29 @@ $$
 \end{align}
 $$
 
-### Interpretación de los parámetros en ARCH(\(m\))
+
+### Propiedades de los modelos ARCH: Volatility clustering
 
 Los coeficientes \(\alpha_i\) actúan como _pesos_ que determinan cuánto influyen los choques pasados en la volatilidad actual.
 
 - Si los \(\alpha_i\) son grandes, la respuesta de la varianza condicional a los choques es _persistente_.
 - Si los \(\alpha_i\) son pequeños, los efectos de los choques pasados se disipan rápidamente.
 
-> En un ARCH(\(1\)), la persistencia se mide directamente con el valor de \(\alpha_1\).
-
-### Fórmula alternativa de un ARCH(\(m\)) (1/2)
-
-Una forma alternativa de escribir un ARCH(\(m\)) consiste en suponer que:
-
-$$
-\begin{align}
-\varepsilon_t &= \upsilon_t \sqrt{h_t}\\
-\upsilon_t &\sim iid (0,1)
-\end{align}
-$$
-Donde:
-
-$$
-h_t = \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots +  \alpha_m \varepsilon_{t-m}^2
-$$
-Es fácil demostrar que, en este caso:
-
-$$
-\mathbb{E}(\varepsilon_t^2|\varepsilon_{t-1},\varepsilon_{t-2},\dots,\varepsilon_{t-m}) = h_t
-$$
-
-### Fórmula alternativa de un ARCH(\(m\)) (2/2)
-
-Si combinamos ambas formas de escribir un modelo ARCH(\(m\)) podemos encontrar las _condiciones para que \(\lambda_t\) exista_. Por ejemplo, para un ARCH(\(1\)):
+Por ejemplo, consideremos un ARCH(1):
 
 $$
 h_t = \alpha_0 + \alpha_1 \varepsilon_{t-1}^2
 $$
-
-- Una condición necesaria para que \(\lambda_t\) exista es que :
-
-$$
-0 \le \alpha_1 < 1
-$$
-
-- Además, si hacemos el supuesto adicional que \(\upsilon_t\sim\mathcal{N}(0,1)\), podemos obtener que, para que exista un cuarto momento finito (y, por tanto, kurtosis finita):
-
-$$
-\alpha_1^2 < \frac{1}{3}
-$$
-
-
-### Propiedades de los modelos ARCH: Volatility clustering
-
-Consideremos un ARCH(1):
-
-$$
-h_t = \alpha_0 + \alpha_1 \varepsilon_{t-1}^2
-$$
-Nota que:
 
 - Si \(\alpha_1\) es grande (cercano a 1), un choque grande en \(\varepsilon_{t-1}\) aumenta \(h_t\) de manera persistente.  
-- Esto produce el **agrupamiento de volatilidad** observado en los datos financieros.  
+- Esto produce el _agrupamiento de volatilidad_ observado en los datos financieros.  
 - Los períodos de alta (baja) varianza tienden a ser seguidos por otros de alta (baja) varianza.
 
-### Propiedades de los modelos ARCH: leptokurtosis (1/2)
+### Propiedades de los modelos ARCH: leptokurtosis
 
-Nota que, aun si \(\upsilon_t \sim N(0,1)\), los errores \(\varepsilon_t\) de un modelo ARCH presentan _colas más pesadas_ que la normal:
+Nota que, aun si \(\upsilon_t \sim N(0,1)\), los errores \(\varepsilon_t\) de un modelo ARCH presentan _colas más pesadas_ que la normal.
 
-$$
-\text{Kurt}(\varepsilon_t) = 3\frac{1-\alpha_1^2}{1-3\alpha_1^2} \; > 3 \quad \text{si } \alpha_1^2 < \tfrac{1}{3}.
-$$
-Entonces: 
+Entonces:
 
 - Los valores grandes de \(|\varepsilon_t|\) ocurren con mayor frecuencia de la esperada bajo normalidad.  
 - Esto se debe a que \(h_t\) cambia en el tiempo: los periodos con varianza alta generan choques más grandes.
@@ -265,39 +219,130 @@ Entonces:
 **Nota.** La leptocurtosis en los modelos ARCH surge _endógenamente_ debido a la variabilidad de \(h_t\). No es necesario suponer una distribución no normal de los errores para obtener colas pesadas.
 
 
-### Propiedades de los modelos ARCH: leptokurtosis (2/2)
 
-<span class="emphasis-blue">Ejercicio</span> 
 
-Muestra que, para un ARCH(\(1\)) con \(\upsilon_t \sim N(0,1)\):
+## Modelos GARCH
 
+### Modelos GARCH (1/5)
+
+Los modelos ARCH capturan el agrupamiento de volatilidad, pero pueden requerir muchos rezagos para describir adecuadamente la dinámica de la varianza.
+
+Una forma más parsimoniosa de modelar esta dinámica es permitir que la varianza dependa también de sus propios valores pasados.
+
+### Modelos GARCH (2/5)
+
+Consideremos un modelo GARCH(1,1):
 
 $$
-\text{Kurt}(\varepsilon_t) = 3\frac{1-\alpha_1^2}{1-3\alpha_1^2} \; > 3 .
+\begin{align}
+\varepsilon_t &= \upsilon_t \sqrt{h_t}, \\
+\upsilon_t &\sim iid(0,1) \\
+h_t &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \beta_1 h_{t-1}\\
+\alpha_0&>0; \ \alpha_1 \geq 0; \ \beta_1\geq 0
+\end{align}
 $$
 
+Nota que este modelo combina:
+
+- Efectos ARCH: \(\varepsilon_{t-1}^2\)
+- Persistencia en la volatilidad: \(h_{t-1}\)
 
 
+### Modelos GARCH (3/5)
+
+En un modelo GARCH(1,1) la suma \(\alpha_1 + \beta_1\) mide la persistencia de la volatilidad:
+
+- Si es pequeña, los choques se disipan rápidamente
+- Si es cercana a 1, los choques afectan la volatilidad por mucho tiempo
+
+Además:
+
+$$
+\alpha_1 + \beta_1 < 1
+$$
+
+es la condición para que el proceso sea estacionario.
+
+### Modelos GARCH (4/5)
+
+En general, un modelo \(GARCH(r,m)\) se escribe como:
+
+$$
+\begin{align}
+\varepsilon_t &= \upsilon_t \sqrt{h_t}, \\ 
+\upsilon_t &\sim iid(0,1) \\
+h_t &= \alpha_0 + \sum_{i=1}^{m} \alpha_i \varepsilon_{t-i}^2 + \sum_{j=1}^{r} \beta_j h_{t-j}\\
+\alpha_0&>0; \alpha_i \ge 0; \ \beta_j \ge 0.
+\end{align}
+$$
+
+Aquí:
+
+- Los términos \(\varepsilon_{t-i}^2\) capturan los choques recientes (efectos ARCH).
+- Los términos \(h_{t-j}\) capturan la persistencia de la volatilidad (efectos GARCH).
+
+
+### Modelos GARCH (5/5)
+
+<span class="emphasis-blue">Nota</span> 
+
+Para que el proceso sea estacionario, se requiere:
+
+$$
+\sum_{i=1}^{m} \alpha_i + \sum_{j=1}^{r} \beta_j < 1.
+$$
+
+### Propiedades de los modelos GARCH: Volatility clustering
+
+Consideremos un GARCH(\(1,1\)):
+
+$$
+h_t = \alpha_0 + \alpha_1\varepsilon_{t-1}^2 + \beta_1h_{t-1},
+\qquad \alpha_0>0,\ \alpha_1\ge0, \ \beta_1\ge0.
+$$
+
+Observa que:
+
+- Un choque grande en \(\varepsilon_{t-1}\) incrementa \(h_t\).
+- A diferencia del modelo ARCH, la volatilidad también depende de su propio pasado \(h_{t-1}\).
+- Si \(\alpha_1+\beta_1\) es grande (cercano a \(1\)), este efecto persiste durante varios periodos.
+- Los periodos de alta (baja) volatilidad tienden a ser seguidos por otros similares. Esto es el _agrupamiento de volatilidad_.
+
+**Nota.** El término \(\beta_1 h_{t-1}\) extiende la memoria de la volatilidad sin aumentar el número de rezagos del modelo.
+
+
+### Propiedades de los modelos GARCH: leptokurtosis
+
+Al igual que en los modelos ARCH, aun si \(\upsilon_t \sim N(0,1)\), los errores \(\varepsilon_t\) de un modelo GARCH presentan _colas más pesadas_ que una distribución normal.
+
+Por ejemplo, para un GARCH(\(1,1\)) tenemos que:
+
+- Los valores grandes de \(|\varepsilon_t|\) son más frecuentes que bajo normalidad.  
+- La leptocurtosis surge endógenamente de la variabilidad de \(h_t\).
+- Una mayor persistencia de la volatilidad, es decir, mayores valores de \(\alpha_1+\beta_1\), suele estar asociada con colas más pesadas.
+
+
+## Prueba de efectos ARCH
 
 ### Efectos ARCH
 
 Antes de aplicar pruebas formales, puede observarse la heteroscedasticidad condicional de manera gráfica. Para esto:
 
 <ol start="1">
-<li> Estimamos el modelo y recuperamos sus residuales: \(e_t\).
+<li> Estimamos el modelo para \(y_t\) y recuperamos sus residuales: \(e_t\).
 </li>
-<li> Examinamos su correlograma de  \(e_t^2\). Si se observan patrones de agrupamiento o autocorrelaciones significativas, tenemos evidencia de efectos ARCH.
+<li> Examinamos el correlograma de  \(e_t^2\). _Si se observan patrones de agrupamiento o autocorrelaciones significativas_, tenemos evidencia de efectos ARCH/GARCH.
 </li>
 </ol>
 
 ### Prueba para los efectos ARCH
 
-<span class="emphasis-blue">Prueba ARCH-LM de Engle (1982).</span> Supongamos que tenemos un modelo ARMA con variables explicativas.
+<span class="emphasis-blue">Prueba ARCH-LM de Engle (1982).</span> Consideremos un modelo para \(y_t\).
 
 <ol start="1">
   <li> Estimamos el modelo y recuperamos sus residuales: \(e_t\).
 </li>
-<li> Estimamos el siguiente modelo:
+<li> Ahora estimamos:
 $$
 e_t^2 = \alpha_0 + \alpha_1 e_{t-1}^2 + \alpha_2 e_{t-2}^2 + \dots + \alpha_m e_{t-m}^2 + u_t
 $$
@@ -313,81 +358,47 @@ TR^2 & \sim \chi^2_m
 $$
 </li>
 
-> **Nota**. Dado que un modelo ARCH(\(m\)) puede interpretarse como un modelo AR(\(m\)) aplicado a los residuales al cuadrado, el correlograma de \(e_t^2\) también ayuda a identificar el valor de \(m\).
+> **Nota**. La prueba ARCH–LM contrasta la presencia de heteroscedasticidad condicional, sin distinguir entre estructuras ARCH o GARCH.
 
 
-### Estimación de un modelo con efectos ARCH (1/2)
+## Estimación y pronósticos, modelos ARCH/GARCH
 
-Los modelos con efectos ARCH se estiman por el _método de máxima verosimilitud_. 
+### Estimación de los modelos ARCH/GARCH
 
-Cuando \(\upsilon_t\sim iid \mathcal{N}(0,1)\), no es difícil demostrar que:
+Los modelos con efectos ARCH/GARCH se estiman por el _método de máxima verosimilitud_. 
 
-$$
-f(y_t|\mathbf{x,\Omega}) = \frac{1}{\sqrt{2\pi h_t}}\exp\left\{-\frac{1}{2h_t}\left(y_t-\boldsymbol{\beta}\mathbf{x}_t\right)^2\right\}
-$$
-donde:
-
-$$
-\begin{align}
-h_t &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots +  \alpha_m \varepsilon_{t-m}^2 \\
-&= \alpha_0 + \alpha_1(y_{t-1}- \boldsymbol{\beta}\mathbf{x}_{t-1})^2 + \alpha_2(y_{t-2}- \boldsymbol{\beta}\mathbf{x}_{t-2})^2+\dots+ \alpha_m(y_{t-m}- \boldsymbol{\beta}\mathbf{x}_{t-m})^2
-\end{align}
-$$
-
-### Estimación de un modelo con efectos ARCH (2/2)
-
-Entonces, la función de verosimilitud de un ARCH(\(m\)) bajo el supuesto de normalidad es:
-
-$$
-\mathcal{L}(\boldsymbol{\theta})  = - \frac{T}{2}\ln(2\pi) - \frac{1}{2}\sum_{t=1}^T\ln(h_t) - \frac{1}{2}\sum_{t=1}^T\frac{\left(y_{t}- \boldsymbol{\beta}\mathbf{x}_{t}\right)^2}{h_t} 
-$$
-
-**Nota.** Naturalmente, la normalidad de \(\upsilon_t\) puede relajarse. Ver, por ejemplo, Hamilton (1992). 
+En la práctica:
+  
+- Se asume una distribución para \(\upsilon_t\) (normal u otra)
+- La estimación se realiza numéricamente
+- Naturalmente, el software se hace cargo de todo.
 
 
-### Pronósticos en modelos ARCH (1/4)
+### Pronósticos en modelos ARCH/GARCH (1/3)
 
-Considera un modelo ARCH(\(1\)):
-
-$$
-\begin{align}
-h_t &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2\\
-\varepsilon_t &= \upsilon_t \sqrt{h_t}\\
-\upsilon_t &\sim iid(0,1)
-\end{align}
-$$
-Deseamos calcular:
-
+En los modelos ARCH/GARCH, el objetivo es pronosticar la varianza condicional:
+  
+  
 $$
 \widehat{h}_{T+s\mid T} = \mathbb{E}(h_{T+s}\mid \Omega_T)
 $$
-_Este pronóstico puede obtenerse mediante iteración_. 
+donde \(\Omega_T\) es el conjunto de información disponible hasta el tiempo \(T\).
 
 
-### Pronósticos en modelos ARCH (2/4)
-
-No es difícil encontrar que:
-
-
-$$
-\widehat{h}_{T+s\mid T} =
-\begin{cases}
-\alpha_0 + \alpha_1\varepsilon_T^2; & \ s=1\\
-\alpha_0 + \alpha_1h_{T+s-1}; & \ s>1
-\end{cases}
-$$
-Esto implica que:
-
-$$
-\widehat{h}_{T+s\mid T}
-= \alpha_0 \sum_{j=0}^{s-1} \alpha_1^j + \alpha_1^s \varepsilon_T^2.
-$$
-
-### Pronósticos en modelos ARCH (3/4)
+<span class="emphasis-blue">Nota.</span> Estos pronósticos se obtienen de forma recursiva, utilizando la estructura del modelo.
+ 
 
 
-Nota que:
 
+
+### Pronósticos en modelos ARCH/GARCH (2/3)
+
+Para un \(ARCH(1)\) tenemos que:
+
+<ul>
+<li> El pronóstico depende de los choques recientes
+</li>
+<li> Conforme aumenta el horizonte, el pronóstico converge a:
 $$
 \begin{align}
 \lim_{s\to\infty}\widehat{h}_{T+s\mid T}
@@ -395,41 +406,42 @@ $$
 &= \sigma^2
 \end{align}
 $$
-Esto es:
-
-- Conforme crece \(h\), el pronóstico converge a la varianza no condicional.
-- Cuanto mayor sea \(\alpha_1\), más lentamente se alcanza la convergencia.
-- Si \(\alpha_1\) es cercano a \(1\), los choques afectan la volatilidad por más tiempo.
-
-
-### Pronósticos en modelos ARCH (4/4)
-
-<span class="emphasis-blue">Ejercicio</span> 
+</li>
+<li> Cuanto mayor sea \(\alpha_1\), más lentamente se alcanza la convergencia.
+</li>
+<li> Si \(\alpha_1\) es cercano a \(1\), los choques afectan la volatilidad por más tiempo.
+</li>
+</ul>
 
 
-Muestra que, para un modelo ARCH(\(1\)):
+### Pronósticos en modelos ARCH/GARCH (3/3)
 
+Para un \(GARCH(1,1)\) tenemos que:
+
+<ul>
+<li> Conforme aumenta el horizonte, el pronóstico converge a:
 $$
 \begin{align}
-h_t &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2\\
-\varepsilon_t &= \upsilon_t \sqrt{h_t}\\
-\upsilon_t &\sim iid(0,1),
+\lim_{s\to\infty}\widehat{h}_{T+s\mid T}
+&= \frac{\alpha_0}{1-(\alpha_1+\beta_1)}\\
+&= \sigma^2
 \end{align}
 $$
-tenemos que:
+</li>
+<li> El término \(\alpha_1+\beta_1\) determina la persistencia de la volatilidad.
+</li>
+<li> Si \(\alpha_1+\beta_1\) es cercano a \(1\), los choques se disipan lentamente.
+</li>
+</ul>
 
-$$
-\widehat{h}_{T+s\mid T}
-= \alpha_0 \sum_{j=0}^{s-1} \alpha_1^j + \alpha_1^s h_T.
-$$
+> En la práctica, el comportamiento de los pronósticos en GARCH suele ser más realista debido a la persistencia adicional.
 
-_Pista_. Usa la ley de las expectativas iteradas y que \(\mathbb{E}(\varepsilon_t^2\mid\Omega_{t-1})=h_t\).
-
+## Ejemplos
 
 ### Ejemplo ARCH: NYSE (1/3)
 
 Considera la tasa de rendimiento diario de la NYSE U.S. 100 del 4 de enero del 2000 al 16 de julio del 2012:
-
+  
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, out.width='70%', out.height='60%'}
 
 library(tidyverse)
@@ -455,10 +467,10 @@ plot(sq_nyse, type='l', pch=19, col=culer[2], main="", xlab="Tiempo", ylab="Cuad
 
 
 Ajustamos el siguiente modelo:
-
+  
 <div style="display:flex; align-items:flex-start; gap:24px;">
 <div style="flex:1;">
-
+  
 $$
 \begin{align}
 y_t &= \phi_0 + \varepsilon_t\\
@@ -467,10 +479,10 @@ h_t & = \alpha_0 + \alpha_1\varepsilon_{t-1}^2
 \end{align}
 $$
 </div>
-
+  
 <div style="flex:1;">
-
-
+  
+  
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 spec_arch <- ugarchspec(
@@ -494,12 +506,12 @@ plot(ht_arch_xts, type = 'l', col = culer[1],
 
 </div>
 </div>
-
-
+  
+  
 ### Ejemplo ARCH: NYSE (3/3)
-
+  
 Finalmente, un pronóstico de \(h_t\) para \(s=20\) periodos hacia adelante resulta en:
-
+  
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center',out.width='70%', out.height='60%'}
 
 horizon <- 20 
@@ -545,276 +557,6 @@ plot(plot_data,
      cex.main = 1)
 
 ```
-
-
-## Modelos GARCH
-
-
-### Modelos GARCH (1/5)
-
-Imaginemos ahora que:
-
-$$
-\begin{align}
-\varepsilon_t &= \upsilon_t \sqrt{h_t}\\
-\upsilon_t &\sim iid (0,1)
-\end{align}
-$$
-
-Pero ahora:
-
-$$
-\begin{align}
-h_t &= \alpha_0 + \Pi(L)\varepsilon_t^2\\
-\Pi(L)&=\sum_{j=1}^\infty \pi_j L^j
-\end{align}
-$$
-
-
-### Modelos GARCH (2/5)
-
-Para parametrizar el polinomio \(\Pi(L)\), podemos suponer que:
-
-$$
-\begin{align}
-\Pi(L) &= \frac{\alpha(L)}{1-\delta(L)} \\
-&=\frac{\alpha_1 L + \alpha_2 L^2 +\dots+ \alpha_m L^m}{1-\delta_1 L - \delta_2 L^2 -\dots- \delta_r L^r}
-\end{align}
-$$
-donde, por ahora, supondremos que las raíces del polinomio \(1-\delta(L)=0\) se encuentran fuera del círculo unitario.
-
-Se puede demostrar que esto implica que:
-
-$$
-\begin{align}
-h_t = \kappa &+ \delta_1 h_{t-1} + \delta_2 h_{t-2} + \dots + \delta_r h_{t-r} \\
-& + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots + \alpha_m \varepsilon_{t-m}^2
-\end{align}
-$$
-con \(\kappa = (1-\delta_1-\delta_2-\dots-\delta_r)\alpha_0\).
-
-### Modelos GARCH (3/5)
-
-El resultado es un modelo **ARCH generalizado** (Bollerslev, 1986), GARCH(\(r,m\)):
-
-$$
-\varepsilon_t \sim \text{GARCH}(r,m)
-$$
-
-### Modelos GARCH (4/5)
-
-Nota que:
-
-$$
-\begin{align}
-h_t + \varepsilon_t^2 = \kappa & - \delta_1 (\varepsilon_{t-1}^2 - h_{t-1}) - \delta_2 (\varepsilon_{t-2}^2 - h_{t-2}) - \dots - \delta_r(\varepsilon_{t-r}^2 - h_{t-r}) \\
-&+ \delta_1 \varepsilon_{t-1}^2 + \delta_2 \varepsilon_{t-2}^2 + \dots + \delta_r \varepsilon_{t-r}^2 \\
-& + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots + \alpha_m \varepsilon_{t-m}^2 + \varepsilon_t^2
-\end{align}
-$$
-O:
-
-$$
-\begin{align}
-\varepsilon_t^2 = \kappa & + \sum_{i=1}^p(\delta_i +\alpha_i) \varepsilon_{t-i}^2  + \omega_{t} \\
-& - \sum_{j=1}^r\delta_j \omega_{t- j},
-\end{align}
-$$
-donde \(\omega_t = \varepsilon_t^2-h_t\) es un **ruido blanco condicionalmente heteroscedástico**  y \(p=\max(m,r)\). Esto es, _si \(\varepsilon_t \sim GARCH(r,m)\), entonces \(\varepsilon_t^2 \sim ARMA(p,r)\)_.
-
-### Modelos GARCH (5/5)
-
-Si suponemos que \(\kappa>0\), \(\alpha_i \geq 0\) y \(\delta_j \geq 0\), entonces, de nuestro análisis de los modelos ARMA, podemos deducir que un modelo GARCH(\(r,m\)) es estacionario si todas las raíces del polinomio:
-
-$$
-1-(\delta_1+\alpha_1)L-(\delta_2+\alpha_2)L^2-\dots-(\delta_p+\alpha_p)L^p
-=0
-$$
-_se encuentran fuera del círculo unitario_. Dado la no-negatividad de los coeficientes, la condición de estacionariedad se simplifica a:
-
-$$
-(\delta_1+\alpha_1)+(\delta_2+\alpha_2)+\dots+(\delta_p+\alpha_p)<1.
-$$
-
-Además, en este caso, se puede demostrar que:
-
-$$
-\sigma^2=\frac{\kappa}{1-\sum_{i=1}^p(\delta_i+\alpha_i)}
-$$
-
-### Propiedades de los modelos GARCH: Volatility clustering
-
-Consideremos un GARCH(\(1,1\)):
-
-$$
-h_t = \kappa + \alpha_1\varepsilon_{t-1}^2 + \delta_1h_{t-1},
-\qquad \kappa>0,\ \alpha_1, \ \delta_1\ge0.
-$$
-
-Observa que:
-
-- Un choque grande en \(\varepsilon_{t-1}\) incrementa \(h_t\).
-- Si \(\alpha_1+\delta_1\) es grande (cercano a \(1\)), este efecto persiste durante varios periodos.
-- Los periodos de alta (baja) volatilidad tienden a ser seguidos por otros similares. Esto es el _agrupamiento de volatilidad (volatility clustering)_.
-
-**Nota.** El término \(\delta_1 h_{t-1}\) extiende la memoria de la volatilidad sin aumentar el número de rezagos del modelo.
-
-
-### Propiedades de los modelos GARCH: leptokurtosis (1/2)
-
-Al igual que en los modelos ARCH, aun si \(\upsilon_t \sim N(0,1)\), los errores \(\varepsilon_t\) de un modelo GARCH presentan _colas más pesadas_ que una distribución normal.
-
-Por ejemplo, para un GARCH(\(1,1\)):
-
-$$
-\text{Kurt}(\varepsilon_t)
-= 3\frac{1 - (\alpha_1+\delta_1)^2}{1 - 3\alpha_1^2 - 2\alpha_1\delta_1 - \delta_1^2}.
-$$
-Entonces: 
-
-- Los valores grandes de \(|\varepsilon_t|\) son más frecuentes que bajo normalidad.  
-- La leptocurtosis surge endógenamente de la variabilidad de \(h_t\).
-- Cuanto mayor sea \(\alpha_1+\delta_1\), más persistentes y pesadas serán las colas. La leptokurtosis disminuye a medida que este término se aleja de 1.
-
-
-### Propiedades de los modelos GARCH: leptokurtosis (2/2)
-
-<span class="emphasis-blue">Ejercicio</span> 
-
-Muestra que, para un GARCH(\(1,1\)) con \(\upsilon_t \sim N(0,1)\):
-
-
-$$
-\text{Kurt}(\varepsilon_t)
-= 3\frac{1 - (\alpha_1+\delta_1)^2}{1 - 3\alpha_1^2 - 2\alpha_1\delta_1 - \delta_1^2} >3.
-$$
-
-### Efectos GARCH
-
-Antes de aplicar pruebas formales, puede observarse la heteroscedasticidad condicional de manera gráfica o residual:
-
-<ol start="1">
-<li> Estimamos el modelo de media (por ejemplo, un ARMA) y recuperamos sus residuales: \(e_t\).
-</li>
-<li> Examinamos el correlograma de \(e_t^2\). Si este muestra autocorrelaciones significativas o patrones de agrupamiento, esto sugiere efectos GARCH.
-</li>
-</ol>
-
-> *Nota*. Dado que un modelo GARCH(\(r,m\)) implica un ARMA(\(p,r\)) en los cuadrados de los errores, el correlograma de \(e_t^2\) proporciona información sobre el orden del modelo.
-
-### Prueba para los efectos ARCH/GARCH
-
-<span class="emphasis-blue">Prueba ARCH-LM de Engle (1982).</span> Supongamos que tenemos un modelo ARMA con variables explicativas.
-
-<ol start="1">
-  <li> Estimamos el modelo y recuperamos sus residuales: \(e_t\).
-</li>
-<li> Estimamos el siguiente modelo:
-$$
-e_t^2 = \alpha_0 + \alpha_1 e_{t-1}^2 + \alpha_2 e_{t-2}^2 + \dots + \alpha_m e_{t-m}^2 + u_t
-$$
-</li>
-<li> Utilizamos el estadístico \(TR^2\) para probar la siguiente hipótesis:
-
-$$
-\begin{align}
-H_0:& \ \alpha_1 = \alpha_2 = \dots = \alpha_m = 0 \\
-H_1: &\  \text{Al menos un }\alpha_i\neq 0\\
-TR^2 & \sim \chi^2_m
-\end{align}
-$$
-</li>
-
-> **Nota**. La prueba ARCH–LM contrasta la presencia de heteroscedasticidad condicional, sin distinguir entre estructuras ARCH o GARCH.
-
-### Estimación de un modelo GARCH (1/2)
-
-Los modelos GARCH se estiman por _máxima verosimilitud_.
-
-Cuando \(\upsilon_t\sim iid \mathcal{N}(0,1)\), no es difícil demostrar que:
-
-$$
-f(y_t|\mathbf{x,\Omega}) = \frac{1}{\sqrt{2\pi h_t}}\exp\left\{-\frac{1}{2h_t}\left(y_t-\boldsymbol{\beta}\mathbf{x}_t\right)^2\right\}
-$$
-
-donde:
-
-$$
-\begin{align}
-h_t &= \alpha_0 + \alpha_1 \varepsilon_{t-1}^2 + \alpha_2 \varepsilon_{t-2}^2 + \dots +  \alpha_m \varepsilon_{t-m}^2 + \delta_1 h_{t-1} + \delta_2 h_{t-2} + \dots + \delta_r h_{t-r}\\
-\end{align}
-$$
-
-### Estimación de un modelo GARCH (2/2)
-
-Entonces, la función de verosimilitud de un GARCH(\(r,m\)) bajo el supuesto de normalidad es:
-
-$$
-\mathcal{L}(\boldsymbol{\theta})  = - \frac{T}{2}\ln(2\pi) - \frac{1}{2}\sum_{t=1}^T\ln(h_t) - \frac{1}{2}\sum_{t=1}^T\frac{\left(y_{t}- \boldsymbol{\beta}\mathbf{x}_{t}\right)^2}{h_t} 
-$$
-
-**Notas.**
-
-- Las primeras observaciones de \(h_t\) se fijan como constantes (por ejemplo, \(h_1 = \text{Var}(y_t)\)).
-- En la práctica, los modelos GARCH suelen estimarse asumiendo \(\upsilon_t \sim \mathcal{N}(0,1)\), aunque se pueden usar distribuciones alternativas para capturar colas más pesadas (por ejemplo, una \(t\) de Student).
-
-
-### Pronósticos en modelos GARCH (1/3)
-
-Considera un modelo GARCH(\(1,1\)):
-
-
-$$
-\begin{align}
-h_t &= \kappa + \alpha_1 \varepsilon_{t-1}^2 + \delta_1h_{t-1}\\
-\kappa&>0, \alpha_1, \delta_1\geq 0
-\end{align}
-$$
-Igual que en el caso de los ARCH, deseamos calcular:
-
-$$
-\widehat{h}_{T+s\mid T} = \mathbb{E}(h_{T+s}\mid \Omega_T)
-$$
-
-Por iteración se obtiene:
-$$
-\widehat{h}_{T+s\mid T}
-= \sigma^2 + (\alpha_1+\delta_1)^s	 (h_T-\sigma^2),
-$$
-
-### Pronósticos en modelos GARCH (2/3)
-
-
-Nota que:
-
-$$
-\begin{align}
-\lim_{s\to\infty}\widehat{h}_{T+s\mid T}
-&= \frac{\kappa}{1-\alpha_1-\delta_1}\\
-&= \sigma^2
-\end{align}
-$$
-Ahora:
-
-- El término \(\alpha_1+\delta_1\) determina la persistencia de la volatilidad.
-- Si \(\alpha_1+\delta_1\) es cercano a \(1\), los choques se disipan lentamente.
-- A largo plazo, \(\widehat{h}_{T+s\mid T}\) converge a la varianza no condicional \(\sigma^2\).
-
-
-### Pronósticos en modelos GARCH (3/3)
-
-<span class="emphasis-blue">Ejercicio</span> 
-
-
-Muestra que, para un modelo GARCH(\(1,1\)):
-
-$$
-\widehat{h}_{T+s\mid T}
-= \sigma^2 + (\alpha_1+\delta_1)^s	 (h_T-\sigma^2),
-$$
-
-_Pista_. Usa la ley de las expectativas iteradas y que \(\mathbb{E}(\varepsilon_t^2\mid\Omega_{t-1})=h_t\).
-
 
 
 ### Ejemplo GARCH: NYSE
@@ -877,9 +619,6 @@ plot(plot_data,
      cex.main = 1)
 
 ```
-
-
-
 
 
 ### Ejemplo GARCH: Brent (1/3)
@@ -949,7 +688,7 @@ ht_garch_xts <- xts(as.numeric(ht_garch), order.by = index(oil_xts))
 
 # --- Gráfica  ---
 plot(ht_garch_xts, type = 'l', col = culer[1],
-     main = expression("Varianza Condicional Estimada MA(3)-GARCH(1,1): " ~ hat(h)[t]),
+     main = expression("Varianza Condicional Estimada MA(1)-GARCH(1,1): " ~ hat(h)[t]),
      xlab = "Tiempo", ylab = expression(hat(h)[t]))
 
 ```
@@ -1004,3 +743,4 @@ plot(plot_data,
 ```
 
 
+Nota que, a diferencia del del NYSE, aquí volatilidad estimada es más persistente y el pronóstico tarda más en converger a la varianza no condicional.
